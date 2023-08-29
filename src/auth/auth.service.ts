@@ -11,7 +11,10 @@ import * as bcrypt from 'bcrypt';
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
   async login(email: string, password: string): Promise<AuthEntity> {
-    const user = await this.prisma.user.findUnique({ where: { email: email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email: email },
+      include: { boards: true },
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -22,6 +25,9 @@ export class AuthService {
     }
 
     return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
       accessToken: this.jwtService.sign({ userId: user.id }),
     };
   }

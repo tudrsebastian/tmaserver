@@ -1,21 +1,34 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "name" TEXT,
 
-  - You are about to drop the column `assignedTo` on the `Boards` table. All the data in the column will be lost.
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
-*/
--- DropForeignKey
-ALTER TABLE "Boards" DROP CONSTRAINT "Boards_assignedTo_fkey";
+-- CreateTable
+CREATE TABLE "Boards" (
+    "id" SERIAL NOT NULL,
+    "title" TEXT NOT NULL,
+    "progress" TEXT NOT NULL,
+    "published" BOOLEAN DEFAULT false,
+    "authorId" INTEGER,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
--- AlterTable
-ALTER TABLE "Boards" DROP COLUMN "assignedTo",
-ADD COLUMN     "authorId" INTEGER;
+    CONSTRAINT "Boards_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "_BoardMembers" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_BoardMembers_AB_unique" ON "_BoardMembers"("A", "B");

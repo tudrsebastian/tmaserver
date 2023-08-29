@@ -16,21 +16,4 @@ export class CreateBoardDto {
   @IsString()
   @MaxLength(255)
   title: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(15)
-  progress: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(255)
-  content: string;
-
-  @ApiProperty({ default: false })
-  @IsBoolean()
-  @IsNotEmpty()
-  published = false;
 }

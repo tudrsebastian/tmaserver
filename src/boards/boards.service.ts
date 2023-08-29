@@ -11,16 +11,13 @@ export class BoardsService {
   }
 
   findAll() {
-    return this.prisma.boards.findMany({ where: { published: true } });
-  }
-  findDrafts() {
-    return this.prisma.boards.findMany({ where: { published: false } });
+    return this.prisma.boards.findMany();
   }
 
   findOne(id: number) {
     return this.prisma.boards.findUnique({
       where: { id },
-      include: { createdBy: true },
+      include: { members: true },
     });
   }
 

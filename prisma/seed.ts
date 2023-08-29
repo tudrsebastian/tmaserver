@@ -8,7 +8,8 @@ const roundsOfHashing = 10;
 async function main() {
   const passwordSabin = await bcrypt.hash('password-sabin', roundsOfHashing);
   const passwordAlex = await bcrypt.hash('password-alex', roundsOfHashing);
-  // create two dummy articles
+  const passwordSeba = await bcrypt.hash('password-seba', roundsOfHashing);
+  // create two dummy boards
   const user1 = await prisma.user.upsert({
     where: { email: 'sabin@adams.com' },
     update: {
@@ -34,43 +35,53 @@ async function main() {
   const board1 = await prisma.boards.upsert({
     where: { id: 1 },
     update: {
-      createdBy: { connect: { id: user1.id } as { id: number } },
+      members: { connect: { id: user1.id } as { id: number } },
     },
     create: {
-      title: 'Prisma Adds Support for MongoDB',
-      progress: 'not started',
-      content:
-        'Support for MongoDB has been one of the most requested features since the initial release of...',
-      published: false,
+      title: 'Test Board 1',
+      members: { connect: { id: user1.id } }, // Connect user1 to board1 during creation.
     },
   });
 
   const board2 = await prisma.boards.upsert({
     where: { id: 2 },
     update: {
-      createdBy: { connect: { id: user2.id } as { id: number } },
+      members: {
+        connect: [
+          { id: user2.id } as { id: number },
+          { id: user1.id } as { id: number },
+        ],
+      },
     },
     create: {
-      title: "What's new in Prisma? (Q1/22)",
-      content:
-        'Our engineers have been working hard, issuing new releases with many improvements...',
-      progress: 'not started',
-      published: true,
+      title: 'Test Board',
+      members: {
+        // Connect user2 and user1 to board2 during creation.
+        connect: [{ id: user2.id }, { id: user1.id }],
+      },
     },
   });
   const board3 = await prisma.boards.upsert({
     where: { id: 5 },
     update: {},
     create: {
-      title: "What's new in Prisma? (Q1/22)",
-      content:
-        'Our engineers have been working hard, issuing new releases with many improvements...',
-      progress: 'not started',
-      published: true,
+      title: 'Kanban Board',
     },
   });
-
-  console.log({ board1, board2, board3, user1, user2 });
+  const user3 = await prisma.user.upsert({
+    where: { email: 'seba@tdr.com' },
+    update: {
+      boards: { connect: { id: board3.id } as { id: number } },
+      password: passwordSeba,
+    },
+    create: {
+      email: 'seba@tdr.com',
+      name: 'Seba Tdr',
+      password: passwordSeba,
+      boards: { connect: { id: board3.id } }, // Connect user3 to board3 during creation.
+    },
+  });
+  console.log({ board1, board2, board3, user1, user2, user3 });
 }
 
 // execute the main function

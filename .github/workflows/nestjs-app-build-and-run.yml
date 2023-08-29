@@ -1,0 +1,28 @@
+name: Nest.js App Build, Test, and Lint
+
+on:
+  push:
+    branches:
+      - main # Change this to your main branch
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14 # You can change this to your preferred Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Lint Nest.js App
+        run: npm run lint

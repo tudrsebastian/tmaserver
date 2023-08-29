@@ -6,24 +6,13 @@ export class BoardEntity implements Boards {
   id: number;
   @ApiProperty()
   title: string;
-  @ApiProperty()
-  progress: string;
-  @ApiProperty()
-  content: string;
-  @ApiProperty()
-  createdAt: Date;
-  @ApiProperty()
-  updatedAt: Date;
-  @ApiProperty()
-  authorId: number;
-  @ApiProperty({ default: false })
-  published = false;
-  @ApiProperty({ required: false, type: UserEntity })
-  createdBy: UserEntity | null;
-  constructor({ createdBy, ...data }: Partial<BoardEntity>) {
+  @ApiProperty({ required: false, type: () => [UserEntity] }) // Use an array to represent multiple members
+  members: UserEntity[] | null; // Use an array to represent multiple members
+
+  constructor({ members, ...data }: Partial<BoardEntity>) {
     Object.assign(this, data);
-    if (createdBy) {
-      this.createdBy = new UserEntity(createdBy);
+    if (members) {
+      this.members = members.map((memberData) => new UserEntity(memberData));
     }
   }
 }
