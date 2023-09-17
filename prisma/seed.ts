@@ -9,6 +9,7 @@ async function main() {
   const passwordSabin = await bcrypt.hash('password-sabin', roundsOfHashing);
   const passwordAlex = await bcrypt.hash('password-alex', roundsOfHashing);
   const passwordSeba = await bcrypt.hash('password-seba', roundsOfHashing);
+
   // create two dummy boards
   const user1 = await prisma.user.upsert({
     where: { email: 'sabin@adams.com' },
@@ -42,7 +43,71 @@ async function main() {
       members: { connect: { id: user1.id } }, // Connect user1 to board1 during creation.
     },
   });
+  const column1 = await prisma.column.create({
+    data: {
+      name: 'Backlog',
 
+      board: {
+        connect: { id: board1.id }, // Associate with board1
+      },
+    },
+  });
+
+  const column2 = await prisma.column.create({
+    data: {
+      name: 'Todo',
+
+      board: {
+        connect: { id: board1.id }, // Associate with board1
+      },
+    },
+  });
+
+  const column3 = await prisma.column.create({
+    data: {
+      name: 'In Progress',
+
+      board: {
+        connect: { id: board1.id }, // Associate with board1
+      },
+    },
+  });
+
+  const column4 = await prisma.column.create({
+    data: {
+      name: 'Done',
+
+      board: {
+        connect: { id: board1.id }, // Associate with board1
+      },
+    },
+  });
+
+  const ticket1 = await prisma.ticket.create({
+    data: {
+      title: 'Task 1',
+      description: 'Description for Task 1',
+      board: {
+        connect: { id: board1.id }, // Associate with board1
+      },
+      column: {
+        connect: { id: column1.id }, // Associate with column1
+      },
+    },
+  });
+
+  const ticket2 = await prisma.ticket.create({
+    data: {
+      title: 'Task 2',
+      description: 'Description for Task 2',
+      board: {
+        connect: { id: board1.id }, // Associate with board1
+      },
+      column: {
+        connect: { id: column1.id }, // Associate with column1
+      },
+    },
+  });
   const board2 = await prisma.boards.upsert({
     where: { id: 2 },
     update: {
@@ -68,6 +133,7 @@ async function main() {
       title: 'Kanban Board',
     },
   });
+
   const user3 = await prisma.user.upsert({
     where: { email: 'seba@tdr.com' },
     update: {
@@ -81,7 +147,20 @@ async function main() {
       boards: { connect: { id: board3.id } }, // Connect user3 to board3 during creation.
     },
   });
-  console.log({ board1, board2, board3, user1, user2, user3 });
+  console.log({
+    board1,
+    board2,
+    board3,
+    user1,
+    user2,
+    user3,
+    column1,
+    column2,
+    column3,
+    column4,
+    ticket1,
+    ticket2,
+  });
 }
 
 // execute the main function

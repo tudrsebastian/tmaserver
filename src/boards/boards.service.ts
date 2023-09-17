@@ -17,7 +17,11 @@ export class BoardsService {
   findOne(id: number) {
     return this.prisma.boards.findUnique({
       where: { id },
-      include: { members: true },
+      include: {
+        members: true,
+        Ticket: true,
+        columns: { include: { Ticket: true } },
+      },
     });
   }
 

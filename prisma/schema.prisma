@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,7 +10,7 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
+  id       Int      @id @unique @default(autoincrement())
   email    String   @unique
   password String
   name     String?
@@ -19,7 +18,28 @@ model User {
 }
 
 model Boards {
-  id      Int    @id @default(autoincrement())
+  id      Int      @id @unique @default(autoincrement())
   title   String
-  members User[] @relation("BoardMembers")
+  members User[]   @relation("BoardMembers")
+  columns Column[]
+  Ticket  Ticket[]
+}
+
+model Column {
+  id      String   @id @unique @default(uuid())
+  name    String
+  board   Boards   @relation(fields: [boardId], references: [id])
+  boardId Int
+  Ticket  Ticket[]
+}
+
+model Ticket {
+  id          String @id @unique @default(uuid())
+  title       String
+  description String
+  position    Int?   @default(autoincrement()) // Automatically set to the end
+  board       Boards @relation(fields: [boardID], references: [id])
+  boardID     Int
+  column      Column @relation(fields: [columnID], references: [id])
+  columnID    String
 }
