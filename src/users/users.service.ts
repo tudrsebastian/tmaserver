@@ -23,7 +23,7 @@ export class UsersService {
   findOne(id: number) {
     return this.prisma.user.findUnique({
       where: { id },
-      include: { boards: true },
+      include: { boards: true, Boards: true },
     });
   }
 

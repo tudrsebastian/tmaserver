@@ -6,13 +6,22 @@ export class BoardEntity implements Boards {
   id: number;
   @ApiProperty()
   title: string;
-  @ApiProperty({ required: false, type: () => [UserEntity] }) // Use an array to represent multiple members
-  members: UserEntity[] | null; // Use an array to represent multiple members
+  @ApiProperty({ required: false, type: () => [UserEntity] })
+  members: UserEntity[] | null;
 
-  constructor({ members, ...data }: Partial<BoardEntity>) {
+  @ApiProperty({ required: false, type: () => UserEntity })
+  createdBy: UserEntity | null;
+  @ApiProperty()
+  userId: number;
+  constructor({ members, createdBy, ...data }: Partial<BoardEntity>) {
     Object.assign(this, data);
+
     if (members) {
       this.members = members.map((memberData) => new UserEntity(memberData));
+    }
+
+    if (createdBy) {
+      this.createdBy = new UserEntity(createdBy);
     }
   }
 }

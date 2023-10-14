@@ -6,8 +6,44 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class BoardsService {
   constructor(private prisma: PrismaService) {}
-  create(createBoardDto: CreateBoardDto) {
-    return this.prisma.boards.create({ data: createBoardDto });
+  async create(createBoardDto: CreateBoardDto, userId: number) {
+    const createdBoard = await this.prisma.boards.create({
+      data: {
+        title: createBoardDto.title,
+        createdBy: {
+          connect: {
+            id: userId, // Assuming userId represents the current user's ID
+          },
+        },
+      },
+    });
+
+    // Step 2: Obtain the board's id
+    const boardId = createdBoard.id;
+
+    // Step 3: Create the default columns
+    await this.prisma.column.createMany({
+      data: [
+        {
+          name: 'Backlog',
+          boardId: boardId,
+        },
+        {
+          name: 'Todo',
+          boardId: boardId,
+        },
+        {
+          name: 'In Progress',
+          boardId: boardId,
+        },
+        {
+          name: 'Done',
+          boardId: boardId,
+        },
+      ],
+    });
+
+    return createdBoard;
   }
 
   findAll() {
@@ -20,7 +56,13 @@ export class BoardsService {
       include: {
         members: true,
         Ticket: true,
-        columns: { include: { Ticket: true } },
+        columns: {
+          include: {
+            Ticket: {
+              orderBy: { position: 'asc' }, // Sort by position in ascending order
+            },
+          },
+        },
       },
     });
   }

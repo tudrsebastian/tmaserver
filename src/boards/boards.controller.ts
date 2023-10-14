@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   NotFoundException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -30,8 +31,21 @@ export class BoardsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: BoardEntity })
-  async create(@Body() createBoardDto: CreateBoardDto) {
-    return new BoardEntity(await this.boardsService.create(createBoardDto));
+  async create(@Body() createBoardDto: CreateBoardDto, @Req() request: any) {
+    // Access the user ID from the request headers
+    const userId = request.user.id; // Assuming your user ID is stored in request.user
+
+    try {
+      const createdBoard = await this.boardsService.create(
+        createBoardDto,
+        userId,
+      );
+      return new BoardEntity(createdBoard);
+    } catch (error) {
+      // Handle any errors here
+      console.error('Error creating board:', error);
+      throw error;
+    }
   }
 
   @Get()

@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { BoardsModule } from './boards/boards.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { TicketsModule } from './tickets/tickets.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
     BoardsModule,
     UsersModule,
     AuthModule,
+    TicketsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

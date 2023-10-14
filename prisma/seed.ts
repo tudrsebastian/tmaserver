@@ -36,10 +36,18 @@ async function main() {
   const board1 = await prisma.boards.upsert({
     where: { id: 1 },
     update: {
-      members: { connect: { id: user1.id } as { id: number } },
+      members: {
+        connect: [
+          { id: user1.id } as { id: number },
+          { id: user2.id } as { id: number },
+        ],
+      },
     },
     create: {
       title: 'Test Board 1',
+      createdBy: {
+        connect: { id: user1.id },
+      },
       members: { connect: { id: user1.id } }, // Connect user1 to board1 during creation.
     },
   });
@@ -120,6 +128,9 @@ async function main() {
     },
     create: {
       title: 'Test Board',
+      createdBy: {
+        connect: { id: user1.id },
+      },
       members: {
         // Connect user2 and user1 to board2 during creation.
         connect: [{ id: user2.id }, { id: user1.id }],
@@ -131,6 +142,9 @@ async function main() {
     update: {},
     create: {
       title: 'Kanban Board',
+      createdBy: {
+        connect: { id: user1.id },
+      },
     },
   });
 

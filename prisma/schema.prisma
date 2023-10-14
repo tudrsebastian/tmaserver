@@ -15,14 +15,17 @@ model User {
   password String
   name     String?
   boards   Boards[] @relation("BoardMembers")
+  Boards   Boards[] @relation("CreatedBy")
 }
 
 model Boards {
-  id      Int      @id @unique @default(autoincrement())
-  title   String
-  members User[]   @relation("BoardMembers")
-  columns Column[]
-  Ticket  Ticket[]
+  id        Int      @id @unique @default(autoincrement())
+  title     String
+  members   User[]   @relation("BoardMembers")
+  createdBy User     @relation("CreatedBy", fields: [userId], references: [id])
+  columns   Column[]
+  Ticket    Ticket[]
+  userId    Int
 }
 
 model Column {
