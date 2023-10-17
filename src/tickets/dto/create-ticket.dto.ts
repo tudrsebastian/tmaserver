@@ -4,12 +4,10 @@ import {
   IsString,
   MaxLength,
   MinLength,
-  IsUUID,
   IsOptional,
 } from 'class-validator';
 export class CreateTicketDto {
   @ApiProperty()
-  @IsUUID()
   id: string;
 
   @ApiProperty()
@@ -25,11 +23,11 @@ export class CreateTicketDto {
   @MaxLength(255)
   description: string;
   @ApiProperty()
-  @IsNotEmpty()
-  position: number;
+  position?: number;
   @ApiProperty()
-  @IsOptional()
+  @IsNotEmpty()
   boardID: number;
   @ApiProperty()
+  @IsString()
   columnID: string;
 }

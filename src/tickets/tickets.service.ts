@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -6,8 +10,25 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class TicketsService {
   constructor(private prisma: PrismaService) {}
-  create(createTicketDto: CreateTicketDto) {
-    return 'This action adds a new ticket';
+  async create(createTicketDto: CreateTicketDto) {
+    console.log(createTicketDto);
+    return this.prisma.ticket.create({
+      data: {
+        title: createTicketDto.title,
+        description: createTicketDto.description,
+        position: createTicketDto.position,
+        board: { connect: { id: createTicketDto.boardID } },
+        column: { connect: { id: createTicketDto.columnID } },
+      },
+    });
+    // try {
+    //   const newTicket = await this.prisma.ticket.create({
+    //     data: createTicketDto,
+    //   });
+    //   return newTicket;
+    // } catch (err) {
+    //   throw new BadRequestException('Could not create new ticket');
+    // }
   }
 
   findAll() {
